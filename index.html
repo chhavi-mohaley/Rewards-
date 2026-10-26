@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pay Day: IB Business Management rewards simulation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Public+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF2F5;--card:#fff;--ink:#12263A;--mute:#5A6B7B;--line:#D3DCE3;--base:#8FA3B5;--fin:#E0A100;--non:#1F8A70;--bad:#C8473F;--acc:#12263A;--accink:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1A26;--card:#162636;--ink:#E7EEF4;--mute:#9FB1C1;--line:#2A3E52;--base:#5F7790;--fin:#F0B429;--non:#3FBF9F;--bad:#E8746C;--acc:#E7EEF4;--accink:#0E1A26;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1A26;--card:#162636;--ink:#E7EEF4;--mute:#9FB1C1;--line:#2A3E52;--base:#5F7790;--fin:#F0B429;--non:#3FBF9F;--bad:#E8746C;--acc:#E7EEF4;--accink:#0E1A26;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 "Public Sans",system-ui,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:20px 16px 56px}
+h1,h2,h3{font-family:"Familjen Grotesk","Public Sans",sans-serif;line-height:1.15;margin:0}
+h1{font-size:clamp(28px,5vw,42px);font-weight:700}
+h2{font-size:20px;font-weight:700;margin-bottom:6px}
+h3{font-size:16px;font-weight:700}
+.lede{color:var(--mute);max-width:62ch;margin:8px 0 22px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+.hint{color:var(--mute);font-size:14px;margin:0 0 12px;max-width:70ch}
+.seg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.seg button{text-align:left;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:12px;font:inherit;cursor:pointer}
+.seg button[aria-pressed="true"]{border-color:var(--acc);background:var(--card);box-shadow:inset 0 0 0 1px var(--acc)}
+.seg b{display:block;font-family:"Familjen Grotesk",sans-serif;font-size:17px}
+.seg span{font-size:13.5px;color:var(--mute)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--fin);outline-offset:2px}
+.grid{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:860px){.grid{grid-template-columns:1fr 1fr}}
+.lever{padding:10px 0;border-top:1px solid var(--line)}
+.lever:first-of-type{border-top:0}
+.lh{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.lh label{font-weight:600}
+.pts{font-family:"Familjen Grotesk",sans-serif;font-weight:700;font-size:18px;min-width:2.5ch;text-align:right}
+.tag{font-size:12px;border-radius:99px;padding:1px 9px;margin-left:6px;border:1px solid currentColor;white-space:nowrap}
+.tag.f{color:var(--fin)}.tag.n{color:var(--non)}
+.lever p{margin:2px 0 4px;font-size:13.5px;color:var(--mute)}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.budget{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.bar{flex:1;height:10px;background:var(--line);border-radius:9px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--acc);transition:width .15s}
+.run{background:var(--acc);color:var(--accink);border:0;border-radius:10px;font:600 16px "Public Sans",sans-serif;padding:12px 18px;cursor:pointer;margin-top:10px}
+.ghost{background:transparent;color:var(--ink);border:2px solid var(--line);border-radius:10px;font:600 14px "Public Sans",sans-serif;padding:8px 12px;cursor:pointer;margin:10px 8px 0 0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.stat{background:var(--bg);border-radius:10px;padding:10px}
+.stat b{display:block;font:700 24px "Familjen Grotesk",sans-serif}
+.stat span{font-size:12.5px;color:var(--mute)}
+svg{width:100%;height:auto;display:block}
+svg text{fill:var(--mute);font:12px "Public Sans",sans-serif}
+svg .tot{fill:var(--ink);font-weight:600}
+.key{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mute);margin-top:4px}
+.key i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.fb{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:8px}
+.fb li{border-left:5px solid var(--non);background:var(--bg);padding:9px 12px;border-radius:0 10px 10px 0;font-size:14.5px}
+.fb li.w{border-color:var(--bad)}
+.fb li b{font-family:"Familjen Grotesk",sans-serif}
+textarea{width:100%;min-height:150px;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:10px;font:inherit}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.chip{font-size:13px;border:1px solid var(--line);border-radius:99px;padding:2px 10px;color:var(--mute)}
+.chip.on{background:var(--non);border-color:var(--non);color:#fff}
+.empty{color:var(--mute);padding:30px 8px;text-align:center}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Pay Day: designing a reward package</h1>
+<p class="lede">You are the HR manager. Pick a team, spend 100 reward points, then watch four quarters play out. Your results are explained using the motivation theories from IB Business Management (Unit 2.5: Taylor, Maslow, Herzberg, Pink).</p>
+
+<section class="step" aria-labelledby="s1">
+<h2 id="s1">1. Choose your workforce</h2>
+<div class="seg" id="seg"></div>
+</section>
+
+<div class="grid">
+<section class="step" aria-labelledby="s2">
+<h2 id="s2">2. Spend your 100 points</h2>
+<p class="hint" id="blurb"></p>
+<div class="budget"><div class="bar"><i id="bfill"></i></div><b id="bleft"></b></div>
+<div id="levers"></div>
+<button class="run" id="run">Run four quarters</button>
+<button class="ghost" id="reset">Reset to balanced</button>
+</section>
+
+<section class="step" aria-labelledby="s3" aria-live="polite">
+<h2 id="s3">3. Results</h2>
+<div id="out"><p class="empty">Set your budget and press “Run four quarters”.</p></div>
+</section>
+</div>
+
+<section class="step" aria-labelledby="s4">
+<h2 id="s4">4. Turn it into exam marks</h2>
+<p class="hint">Write an “evaluate” answer using what you saw. The chips light up as you use the key terms examiners look for.</p>
+<h3 id="q"></h3>
+<textarea id="ans" aria-label="Your answer" placeholder="Start with a definition, apply it to the team, then weigh up the evidence…"></textarea>
+<div class="chips" id="chips"></div>
+<p class="hint" id="wc"></p>
+<p class="hint">A strong answer defines financial and non-financial rewards, applies at least two theories, uses evidence from your simulation, and finishes with a justified judgement that says what the best package depends on.</p>
+</section>
+</div>
+
+<script>
+const LEV=[
+{k:'salary',n:'Base salary',t:'f',d:'Fixed pay that covers living costs. A Herzberg hygiene factor.'},
+{k:'prp',n:'Performance-related pay or commission',t:'f',d:'Pay that rises with output, as in Taylor’s piece-rate thinking.'},
+{k:'profit',n:'Profit sharing and share options',t:'f',d:'A slice of company success. Pays out slowly, builds loyalty.'},
+{k:'benefits',n:'Fringe benefits',t:'f',d:'Health cover, pension, gym, company car. Meets security needs (Maslow).'},
+{k:'enrich',n:'Job enrichment and empowerment',t:'n',d:'More responsibility and autonomy. A Herzberg motivator; Pink’s autonomy.'},
+{k:'train',n:'Training and promotion prospects',t:'n',d:'Growth and mastery. Supports esteem and self-actualisation.'}];
+const SC={
+sales:{name:'Sales team',org:'Meridian Telecom call centre',blurb:'Meridian’s sales staff are target-driven and competitive. Most are paid close to the market rate already.',need:32,w:{prp:1,profit:.5,enrich:.5,train:.6},pt:35,pk:.6,pw:'Very high commission pushes staff to chase quick sales and stop helping each other, so teamwork and customer service suffer.'},
+nurse:{name:'Hospital nurses',org:'St Aldric’s Hospital',blurb:'Nurses are motivated by purpose and patient care. Pay worries are high, though, because rents are rising.',need:40,w:{prp:.2,profit:.1,enrich:.9,train:.9},pt:15,pk:.8,pw:'Linking pay to “output” crowds out the sense of purpose and can push staff to rush patients (Pink: extrinsic rewards can undermine intrinsic motivation).'},
+dev:{name:'Software developers',org:'Loop Labs start-up',blurb:'Developers value autonomy and interesting problems. Competitors keep poaching them with bigger salaries.',need:36,w:{prp:.4,profit:.8,enrich:1,train:.9},pt:25,pk:.5,pw:'Creative work does not respond well to tight bonus targets. People narrow their focus and avoid risky ideas (Pink on creative tasks).'}};
+const FF=[1,.8,.64,.5],PF=[.3,.6,1,1],NF=[.4,.7,.9,1],XF=[.4,1,1,1];
+const BAL={salary:30,prp:14,profit:10,benefits:16,enrich:15,train:15};
+let cur='sales',V={...BAL};
+const $=id=>document.getElementById(id);
+const f=p=>1-Math.exp(-p/14);
+
+function buildSeg(){$('seg').innerHTML=Object.entries(SC).map(([k,s])=>`<button aria-pressed="${k===cur}" data-k="${k}"><b>${s.name}</b><span>${s.org}</span></button>`).join('');
+$('seg').querySelectorAll('button').forEach(b=>b.onclick=()=>{cur=b.dataset.k;buildSeg();$('blurb').textContent=SC[cur].blurb;clearOut();setQ()})}
+function buildLevers(){$('levers').innerHTML=LEV.map(l=>`<div class="lever"><div class="lh"><label for="r_${l.k}">${l.n}<span class="tag ${l.t}">${l.t==='f'?'financial':'non-financial'}</span></label><span class="pts" id="p_${l.k}"></span></div><p>${l.d}</p><input type="range" id="r_${l.k}" min="0" max="100" step="1"></div>`).join('');
+LEV.forEach(l=>{const r=$('r_'+l.k);r.oninput=()=>{const others=LEV.reduce((a,m)=>a+(m.k===l.k?0:V[m.k]),0);V[l.k]=Math.min(+r.value,100-others);sync()}});sync()}
+function sync(){let tot=0;LEV.forEach(l=>{$('r_'+l.k).value=V[l.k];$('p_'+l.k).textContent=V[l.k];tot+=V[l.k]});
+$('bfill').style.width=tot+'%';$('bleft').textContent=(100-tot)+' points left'}
+function clearOut(){$('out').innerHTML='<p class="empty">Set your budget and press “Run four quarters”.</p>'}
+
+function sim(){const s=SC[cur],w=s.w;
+const hyg=Math.min(1,(V.salary+.5*V.benefits)/s.need),base=20+25*hyg;
+const prpE=22*w.prp*f(V.prp),proE=14*w.profit*f(V.profit),enE=26*w.enrich*f(V.enrich),trE=22*w.train*f(V.train);
+const pen=Math.max(0,V.prp-s.pt)*s.pk,rows=[];
+for(let q=0;q<4;q++){let fin=prpE*FF[q]+proE*PF[q],non=(enE+trE)*NF[q];fin-=pen*XF[q];if(fin<0){non+=fin;fin=0}non=Math.max(0,non);
+let tot=Math.min(100,base+fin+non);rows.push({b:base,f:fin,n:non,t:tot})}
+const m=rows[3].t;return{rows,hyg,pen,m,prod:Math.round(70+.5*m),turn:Math.max(2,Math.min(40,32-.28*m)).toFixed(0),prpE,enE,trE,s}}
+
+function chart(rows){const H=170,top=14,bw=52,gap=34,x0=34;let g='';
+[0,25,50,75,100].forEach(v=>{const y=top+H-(v/100)*H;g+=`<line x1="${x0-6}" x2="350" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="0" y="${y+4}">${v}</text>`});
+rows.forEach((r,i)=>{const x=x0+i*(bw+gap);let y=top+H;
+[['b','--base'],['f','--fin'],['n','--non']].forEach(([k,c])=>{const h=r[k]/100*H;y-=h;if(h>0)g+=`<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="3" fill="var(${c})"/>`});
+g+=`<text class="tot" x="${x+bw/2}" y="${y-5}" text-anchor="middle">${Math.round(r.t)}</text><text x="${x+bw/2}" y="${top+H+16}" text-anchor="middle">Q${i+1}</text>`});
+return `<svg viewBox="0 0 360 205" role="img" aria-label="Motivation index by quarter, split into hygiene base, financial and non-financial effects">${g}</svg><div class="key"><span><i style="background:var(--base)"></i>Hygiene base (pay, benefits)</span><span><i style="background:var(--fin)"></i>Financial motivation</span><span><i style="background:var(--non)"></i>Non-financial motivation</span></div>`}
+
+function feedback(r){const s=r.s,o=[];const add=(t,x,w)=>o.push(`<li class="${w?'w':''}"><b>${t}.</b> ${x}</li>`);
+if(r.hyg<1)add('Herzberg: hygiene not met',`Salary and benefits cover only ${Math.round(r.hyg*100)}% of what this team needs to feel fairly paid, so dissatisfaction caps motivation. Maslow would say basic and security needs come first.`,1);
+else if(V.salary+.5*V.benefits>s.need*1.4)add('Diminishing returns on pay',`You spent well beyond the hygiene threshold. Extra salary stops motivating once pay feels fair (Herzberg, Pink), so those points could have worked harder elsewhere.`,1);
+else add('Hygiene covered',`Pay and benefits meet this team’s baseline, so dissatisfaction is not holding them back.`);
+if(r.pen>0)add('Reward side-effects',s.pw,1);
+const dr=r.rows[0].f-r.rows[3].f;
+if(V.prp>=12&&dr>2)add('Financial boosts fade',`Your financial effect fell by about ${dr.toFixed(0)} points between Q1 and Q4. People adapt to pay-linked incentives, which is why Herzberg called money a short-term fix.`,1);
+if(V.prp>0&&s.w.prp>=.9&&r.pen===0)add('Taylor works here',`Sales roles have clear, measurable output, so performance-related pay is a good fit, as scientific management predicted.`);
+if(V.enrich+V.train>=30&&(r.enE+r.trE)>20)add('Motivators build over time',`Enrichment and training grew each quarter. These meet esteem and self-actualisation needs (Maslow) and give autonomy and mastery (Pink).`);
+else if(V.enrich+V.train<20)add('Few motivators',`With little enrichment or training, nothing is pulling staff beyond “fair pay”. Expect average output and weaker retention.`,1);
+const gain=r.rows[3].t-r.rows[0].t;
+o.push(`<li class="${gain>=0?'':'w'}"><b>Trend.</b> Motivation ${gain>=0?'rose':'fell'} by ${Math.abs(gain).toFixed(0)} points from Q1 to Q4: ${gain>=0?'a more sustainable package.':'a package that peaks early and fades.'}</li>`);
+return `<ul class="fb">${o.join('')}</ul>`}
+
+$('run').onclick=()=>{if(Object.values(V).reduce((a,b)=>a+b,0)<100){$('bleft').scrollIntoView({block:'nearest'})}
+const r=sim();$('out').innerHTML=`<div class="stats"><div class="stat"><b>${Math.round(r.m)}</b><span>Motivation index, Q4</span></div><div class="stat"><b>${r.prod}</b><span>Output index (100 = last year)</span></div><div class="stat"><b>${r.turn}%</b><span>Staff turnover</span></div></div>${chart(r.rows)}${feedback(r)}`;
+setQ()};
+$('reset').onclick=()=>{V={...BAL};sync();clearOut()};
+
+const KW=[['Financial rewards','financial'],['Non-financial','non-financial|nonfinancial|non financial'],['Taylor','taylor|piece.?rate|scientific management'],['Maslow','maslow|hierarchy'],['Herzberg','herzberg|hygiene|motivator'],['Pink','pink|autonomy|mastery|purpose'],['Fringe benefits','fringe'],['Performance-related pay','performance.?related|commission|bonus'],['Job enrichment','enrichment|empower'],['Judgement','however|on balance|it depends|overall|therefore']];
+function setQ(){$('q').textContent=`Evaluate the reward package you chose for the ${SC[cur].name.toLowerCase()} at ${SC[cur].org}. [10 marks]`}
+function chk(){const t=$('ans').value.toLowerCase();$('chips').innerHTML=KW.map(([n,re])=>`<span class="chip ${new RegExp(re).test(t)?'on':''}">${n}</span>`).join('');
+const w=t.trim()?t.trim().split(/\s+/).length:0;$('wc').textContent=w+' words. Aim for roughly 250 to 350 for a 10-mark evaluation.'}
+$('ans').oninput=chk;
+buildSeg();$('blurb').textContent=SC[cur].blurb;buildLevers();setQ();chk();
+</script>
+</body>
+</html>
